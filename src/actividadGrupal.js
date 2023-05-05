@@ -2,10 +2,45 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
 
     console.log("Los datos ya se han recibido v1")
 
+    // Definición de las variables
+
+    // Fijar en alto y ancho del area donde se dibujará la gráfica.    
+    var height = 800
+    var width = 500
+
+    // Los valores que queremos representar se encuentran en Repuesta/Datos/Metricas.
+    // Aquí tenemos un array de 7 elementos con diferentes metricas según el siguiente
+    // orden:
+
+    // 1    Compraventa de viviendas a nivel mensual - Porcentaje de variación de nuevas Viviendas 
+    //      con respecto al mismo mes del año anterior.
+    
+    // 2    Compraventa de viviendas a nivel mensual - Porcentaje de variación de Viviendas segunda mano
+    //      con respecto al mismo mes del año anterior.
+    
+    // 3    Compraventa de viviendas a nivel mensual - Porcentaje de variación de Viviendas en general
+    //      con respecto al mismo mes del año anterior.
+    
+    // 4    Compraventa de viviendas a nivel mensual - Porcentaje de variación de Euros/metro cuadrado 
+    //      con respecto al mismo mes del año anterior.
+    
+    // 5    Hipotecas a nivel mensual - Porcentaje de variación de Número de hipotecas con respecto 
+    //      al mismo mes del año anterior.
+    
+    // 6    Estos valores no son utilizados por el momento (formato de fecha distinto,es trimetre en vez de
+    //      nombre del mes del año)
+    
+    // 7    Deuda de las familias a nivel mensual - Porcentaje de variación de Euros de la deuda 
+    //      con respecto al mismo mes del año anterior
+      
+    // Se almacena en la vaible las metricas.
     var metricas = datosCompletos.Respuesta.Datos.Metricas
+    
 
-    var datos = datosCompletos.Respuesta.Datos.Metricas[0].Datos
-
+    // Con el objetivo de facilitar la creación de el eje X como escala temporal,
+    // se transformará la fecha, que viene dada en dos campos, Agno y Periodo, a un 
+    // formato fecha estandar: YYYY-MM-DD. Para ello se crea un mapeo entre nombre de
+    // mes y número del mes en el año.
     var meses = {
         "Enero": 1,
         "Febrero": 2,
@@ -21,66 +56,92 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         "Diciembre": 12
     };
 
+    // Se itera primero por las metricas, y luego por los datos dentro de las métricas,
+    // para crear un nuevo campo 'fecha' que contiene la fecha según formato YYYY-MM-DD.
+    // Para la metrica 6, donde Periodo no representa mes sino trimestre, la transformación
+    // no está contemplada.
     metricas.forEach(function (d0) {
         d0.Datos.forEach(function (d1) {
             var fecha = d1.Agno + "-" + (meses[d1.Periodo] < 10 ? "0" : "") + meses[d1.Periodo] + "-01";
             d1.fecha = fecha;
         });
     });
-
-    var ancho = 800;
-    var altura = 500;
+    
+    // Se definen los margenes para la gráfiac.
     var margen = { superior: 50, derecho: 20, inferior: 30, izquierdo: 50 };
 
-    var svg = d3.select("body")
+    // Como elemento base donde dibujar la grafica de lineas se selecciona
+    // el div con identificador grafiacaLineas
+    var divgraficaLineas = d3.select("#graficaLineas")
+
+    // Se crea el svg con ancho, alto en el grupo (g). Luego se translada
+    // según los margenes definidos.
+    var svg = divgraficaLineas
         .append("svg")
-        .attr("width", ancho + margen.izquierdo + margen.derecho)
-        .attr("height", altura + margen.superior + margen.inferior)
+        .attr("width", height + margen.izquierdo + margen.derecho)
+        .attr("height", width + margen.superior + margen.inferior)
         .append("g")
         .attr("transform", "translate(" + margen.izquierdo + "," + margen.superior + ")");
 
+    // Para definir la escala se utiliza la metrica 0, ya que esta
+    // sería la que podría tener un rango mayor y válido para el resto.
 
+    // Una posibles mejora sería calcular un rango, teniendo en cuenta cada métrica, que cubra
+    // los valores de todas ellas.
     datos = metricas[0].Datos
+
+    // En el ejeX se utiliza una escala temporal, haciendo uso del nuevo campo fecha, creado con el
+    // formato adecuado para poder crear un tipo de datos Date que la librería es capaz de interpretar.
+    // Este dominio sería la fecha, y el rango el ancho de la gráfica.
 
     var escalaX = d3.scaleTime()
         .domain(d3.extent(datos, function (d) { return new Date(d.fecha); }))
-        .range([0, ancho]);
+        .range([0, height]);
 
+    // En el eje Y se utilizan los valores máximos y minimos (más unos margenes de 20, para que las graficas de lineas no queden 
+    // ajustadas al los límites), y se define un rango del alto de la gráfica.
     var escalaY = d3.scaleLinear()
         .domain([d3.min(datos, function (d) { return d.Valor; }) - 20, d3.max(datos, function (d) { return d.Valor; }) + 20])
-        .range([altura, 0]);
+        .range([width, 0]);
 
+    // Se aplica la escala al ejeX
     var ejeX = d3.axisBottom(escalaX);
+
+    // Se aplica la escala al ejeY
     var ejeY = d3.axisLeft(escalaY);
 
-    // Title
+    // Se añade un título a la gráfica.
     svg.append('text')
-        .attr('x', ancho / 2)
+        .attr('x', height / 2)
         .attr('y', 0)
         .attr('text-anchor', 'middle')
         .style('font-family', 'Helvetica')
         .style('font-size', 20)
         .text("Indicadores del mercado inmobiliario");
 
+    /*
+        todo ver como hacer la leyenda
     svg.append('text')
-        .attr('x', ancho / 2)
+        .attr('x', height / 2)
         .attr('y', 25)
         .attr('text-anchor', 'middle')
         .style('font-family', 'Helvetica')
         .style('font-size', 20)
         .text("Porcentaje de variacion vivienda nuevas");
+    */
 
-
+    // Se añade el ejeX al svg grupo (g) , y se translada para situarlo,
+    // en la parte inferior de la gráfica.
     svg.append("g")
-        .attr("transform", "translate(0," + altura + ")")
+        .attr("transform", "translate(0," + width + ")")
         .call(ejeX);
 
+    // Se añade el ejeY al svg grupo (g).
     svg.append("g")
         .call(ejeY);
 
     var ID = 0;
     metricas.forEach(function (d0) {
-
 
         var linea = d3.line()
             .x(function (d) { return escalaX(new Date(d.fecha)); })
