@@ -153,13 +153,26 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
 
         // Se vincula a la linea los valores, créandose con una configuraión de color, relleno etc...
         // Se añade un ID a la clase para luego poder activarse/desactivarse mediante acciones de botón.    
+
+
         svg.append("path")
             .datum(d0.Datos)
             .attr("d", linea)
-            .attr("stroke", "steelblue")
+            .attr("stroke", "grey")
             .attr("fill", "none")
             .style("stroke-width", "2")
+            .style("display", "none")
             .attr("id", ID);
+
+        svg.selectAll(".dot")
+            .data(d0.Datos)
+            .enter().append("circle")
+            .attr("cx", (function (d) { return escalaX(new Date(d.fecha)); }))
+            .attr("cy",(function (d) { return escalaY(d.Valor); }))
+            .attr("r", 4)
+            .style("display", "none")
+            .attr("id", ID)
+            .attr("fill", "grey");            
 
         ID++;
 
@@ -168,12 +181,12 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     // Se crear una estructura de datos para guardar si línea está siendo visualizada o no.
     var lineasVisibles = {
         linea1: true,
-        linea2: true,
-        linea3: true,
-        linea4: true,
-        linea5: true,
-        linea6: true,
-        linea7: true
+        linea2: false,
+        linea3: false,
+        linea4: false,
+        linea5: false,
+        linea6: false,
+        linea7: false
     };
 
     // Para cada uno de los botones se define una acción, donde se visualiza la línea o no, dependiendo 
@@ -183,13 +196,31 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked!")
             lineasVisibles.linea1 = !lineasVisibles.linea1;
             svg.select("path[id='0']").style("display", lineasVisibles.linea1 ? "inline" : "none");
+            svg.selectAll("circle[id='0']").style("display", lineasVisibles.linea1 ? "inline" : "none");
         });
+
+    d3.select("#linea-1")
+        .on("mouseover", function () {
+
+            svg.select("path[id='0']").style("stroke","blue");
+            svg.selectAll("circle[id='0']").style("fill","blue");
+        });
+
+    d3.select("#linea-1")
+        .on("mouseout", function () {
+
+            svg.select("path[id='0']").style("stroke","grey");
+            svg.selectAll("circle[id='0']").style("fill","grey");
+        });
+
+
 
     d3.select("#linea-2")
         .on("click", function () {
             console.log("Button clicked!")
             lineasVisibles.linea2 = !lineasVisibles.linea2;
             svg.select("path[id='1']").style("display", lineasVisibles.linea2 ? "inline" : "none");
+            svg.selectAll("circle[id='1']").style("display", lineasVisibles.linea2 ? "inline" : "none");
         });
 
     d3.select("#linea-3")
@@ -197,6 +228,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked!")
             lineasVisibles.linea3 = !lineasVisibles.linea3;
             svg.select("path[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");
+            svg.selectAll("circle[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");
         });
 
     d3.select("#linea-4")
@@ -204,6 +236,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked!")
             lineasVisibles.linea4 = !lineasVisibles.linea4;
             svg.select("path[id='3']").style("display", lineasVisibles.linea4 ? "inline" : "none");
+            svg.selectAll("circle[id='3']").style("display", lineasVisibles.linea4 ? "inline" : "none");
         });
 
     d3.select("#linea-5")
@@ -211,6 +244,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked!")
             lineasVisibles.linea5 = !lineasVisibles.linea5;
             svg.select("path[id='4']").style("display", lineasVisibles.linea5 ? "inline" : "none");
+            svg.selectAll("circle[id='4']").style("display", lineasVisibles.linea5 ? "inline" : "none");
         });
 
     d3.select("#linea-6")
@@ -218,6 +252,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked 6!")
             lineasVisibles.linea6 = !lineasVisibles.linea6;
             svg.select("path[id='5']").style("display", lineasVisibles.linea6 ? "inline" : "none");
+            svg.selectAll("circle[id='5']").style("display", lineasVisibles.linea6 ? "inline" : "none");
         });
 
     d3.select("#linea-7")
@@ -225,6 +260,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked 7!")
             lineasVisibles.linea7 = !lineasVisibles.linea7;
             svg.select("path[id='6']").style("display", lineasVisibles.linea7 ? "inline" : "none");
+            svg.selectAll("circle[id='6']").style("display", lineasVisibles.linea7 ? "inline" : "none");
         });
 
 })
