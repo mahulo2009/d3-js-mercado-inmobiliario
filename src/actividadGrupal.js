@@ -152,7 +152,6 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             .y(function (d) { return escalaY(d.Valor); })
             .curve(d3.curveMonotoneX)
 
-
         // Se vincula a la linea los valores, créandose con una configuraión de color, relleno etc...
         // Se añade un ID a la clase para luego poder activarse/desactivarse mediante acciones de botón.    
         svg.append("path")
@@ -163,7 +162,16 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             .style("stroke-width", "1")
             .attr("id", ID)
             .attr("class", "linea");
-        ;
+
+        // Puntos
+        svg.selectAll(".dot")
+            .data(d0.Datos)
+            .enter().append("circle")
+            .attr("cx", function (d) { return escalaX(new Date(d.fecha)); })
+            .attr("cy", function (d) { return escalaY(d.Valor); })
+            .attr("r", 4)
+            .attr("id", ID)
+            .attr("fill", "steelblue");
 
         ID++;
 
@@ -183,17 +191,17 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     // Para cada uno de los botones se define una acción, donde se visualiza la línea o no, dependiendo
     // de si pulsamos el botón correspondiente y del estado anterior.
     d3.select("#linea-1")
-        .on("click", function () {
-            console.log("Button clicked!")
+        .on("click", function () {            
             lineasVisibles.linea1 = !lineasVisibles.linea1;
             svg.select("path[id='0']").style("display", lineasVisibles.linea1 ? "inline" : "none");
+            svg.selectAll("circle[id='0']").style("display", lineasVisibles.linea1 ? "inline" : "none");
         });
 
     d3.select("#linea-2")
-        .on("click", function () {
-            console.log("Button clicked!")
+        .on("click", function () {            
             lineasVisibles.linea2 = !lineasVisibles.linea2;
             svg.select("path[id='1']").style("display", lineasVisibles.linea2 ? "inline" : "none");
+            svg.selectAll("circle[id='1']").style("display", lineasVisibles.linea2 ? "inline" : "none");
         });
 
     d3.select("#linea-3")
@@ -201,34 +209,35 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             console.log("Button clicked!")
             lineasVisibles.linea3 = !lineasVisibles.linea3;
             svg.select("path[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");
+            svg.selectAll("circle[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");            
         });
 
     d3.select("#linea-4")
-        .on("click", function () {
-            console.log("Button clicked!")
+        .on("click", function () {            
             lineasVisibles.linea4 = !lineasVisibles.linea4;
             svg.select("path[id='3']").style("display", lineasVisibles.linea4 ? "inline" : "none");
+            svg.selectAll("circle[id='3']").style("display", lineasVisibles.linea4 ? "inline" : "none");                        
         });
 
     d3.select("#linea-5")
-        .on("click", function () {
-            console.log("Button clicked!")
+        .on("click", function () {            
             lineasVisibles.linea5 = !lineasVisibles.linea5;
             svg.select("path[id='4']").style("display", lineasVisibles.linea5 ? "inline" : "none");
+            svg.selectAll("circle[id='4']").style("display", lineasVisibles.linea5 ? "inline" : "none");                        
         });
 
     d3.select("#linea-6")
-        .on("click", function () {
-            console.log("Button clicked 6!")
+        .on("click", function () {            
             lineasVisibles.linea6 = !lineasVisibles.linea6;
             svg.select("path[id='5']").style("display", lineasVisibles.linea6 ? "inline" : "none");
+            svg.selectAll("circle[id='5']").style("display", lineasVisibles.linea6 ? "inline" : "none");                        
         });
 
     d3.select("#linea-7")
-        .on("click", function () {
-            console.log("Button clicked 7!")
+        .on("click", function () {            
             lineasVisibles.linea7 = !lineasVisibles.linea7;
             svg.select("path[id='6']").style("display", lineasVisibles.linea7 ? "inline" : "none");
+            svg.selectAll("circle[id='6']").style("display", lineasVisibles.linea7 ? "inline" : "none");                        
         });
 
     d3.selectAll(".linea")
