@@ -5,8 +5,8 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     // Definición de las variables
 
     // Fijar en alto y ancho del area donde se dibujará la gráfica.    
-    var height = 800
-    var width = 500
+    var height = 600
+    var width = 800
 
     // Los valores que queremos representar se encuentran en Repuesta/Datos/Metricas.
     // Aquí tenemos un array de 7 elementos con diferentes metricas según el siguiente
@@ -56,11 +56,20 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         "Diciembre": 12
     };
 
+    metricas.splice(5, 1);
+
+    metricas.forEach(function (d0) {
+        d0.Datos = d0.Datos.filter(function (d) { return d.Agno == '2021' });
+    });
+
+
+
     // Se itera primero por las metricas, y luego por los datos dentro de las métricas,
     // para crear un nuevo campo 'fecha' que contiene la fecha según formato YYYY-MM-DD.
     // Para la metrica 6, donde Periodo no representa mes sino trimestre, la transformación
     // no está contemplada.
     metricas.forEach(function (d0) {
+
         d0.Datos.forEach(function (d1) {
             var fecha = d1.Agno + "-" + (meses[d1.Periodo] < 10 ? "0" : "") + meses[d1.Periodo] + "-01";
             d1.fecha = fecha;
@@ -68,18 +77,18 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     });
     
     // Se definen los margenes para la gráfiac.
-    var margen = { superior: 50, derecho: 20, inferior: 30, izquierdo: 50 };
+    var margen = { superior: 50, derecho: 30, inferior: 30, izquierdo: 20 };
 
     // Como elemento base donde dibujar la grafica de lineas se selecciona
     // el div con identificador grafiacaLineas
-    var divgraficaLineas = d3.select("#graficaLineas")
+    var divgraficaLineas = d3.select("#graficaLineas");
 
     // Se crea el svg con ancho, alto en el grupo (g). Luego se translada
     // según los margenes definidos.
     var svg = divgraficaLineas
         .append("svg")
-        .attr("width", height + margen.izquierdo + margen.derecho)
-        .attr("height", width + margen.superior + margen.inferior)
+        .attr("width", width + margen.izquierdo + margen.derecho)
+        .attr("height", height + margen.superior + margen.inferior)
         .append("g")
         .attr("transform", "translate(" + margen.izquierdo + "," + margen.superior + ")");
 
@@ -91,19 +100,21 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     // los valores de todas ellas.
     datos = metricas[0].Datos
 
+
+
     // En el ejeX se utiliza una escala temporal, haciendo uso del nuevo campo fecha, creado con el
     // formato adecuado para poder crear un tipo de datos Date que la librería es capaz de interpretar.
     // Este dominio sería la fecha, y el rango el ancho de la gráfica.
 
     var escalaX = d3.scaleTime()
         .domain(d3.extent(datos, function (d) { return new Date(d.fecha); }))
-        .range([0, height]);
+        .range([0, width]);
 
     // En el eje Y se utilizan los valores máximos y minimos (más unos margenes de 20, para que las graficas de lineas no queden 
     // ajustadas al los límites), y se define un rango del alto de la gráfica.
     var escalaY = d3.scaleLinear()
-        .domain([d3.min(datos, function (d) { return d.Valor; }) - 20, d3.max(datos, function (d) { return d.Valor; }) + 20])
-        .range([width, 0]);
+        .domain([-40, 140])
+        .range([height, 0]);
 
     // Se aplica la escala al ejeX
     var ejeX = d3.axisBottom(escalaX);
@@ -112,6 +123,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     var ejeY = d3.axisLeft(escalaY);
 
     // Se añade un título a la gráfica.
+/*    
     svg.append('text')
         .attr('x', height / 2)
         .attr('y', 0)
@@ -119,7 +131,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         .style('font-family', 'Helvetica')
         .style('font-size', 20)
         .text("Indicadores del mercado inmobiliario");
-
+*/
     /*
         todo ver como hacer la leyenda
     svg.append('text')
@@ -134,7 +146,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     // Se añade el ejeX al svg grupo (g) , y se translada para situarlo,
     // en la parte inferior de la gráfica.
     svg.append("g")
-        .attr("transform", "translate(0," + width + ")")
+        .attr("transform", "translate(0," + height + ")")
         .call(ejeX);
 
     // Se añade el ejeY al svg grupo (g).
@@ -148,7 +160,6 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         "#003366",
         "#006633",
         "#990000",
-        "#000000",
         "#660066"
     ]
 
@@ -286,10 +297,69 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         })
         .on("mouseout", function () {
             d3.select(this).style("stroke-width", "1");
-        })
-        .on("click", function (d) {
-            alert("Valor: " + d.Valor);
-
         });
+
+
+
+    var divgraficaBarras = d3.select("#graficaBarras");
+
+    var svgBarras = divgraficaBarras
+        .append("svg")
+        .attr("width", width + margen.izquierdo + margen.derecho)
+        .attr("height", height + margen.superior + margen.inferior)
+        .append("g")
+        .attr("transform", "translate(" + margen.izquierdo + "," + margen.superior + ")");
+
+    datos = metricas[0].Datos
+
+    var escalaBarrasX = d3.scaleTime()
+        .domain(d3.extent(datos, function (d) { return new Date(d.fecha); }))
+        .range([0, width]);
+
+    var escalaBarrasY = d3.scaleLinear()
+        .domain([-40, 140])
+        .range([0, height]);
+
+
+    var ejeBarrasX = d3.axisBottom(escalaBarrasX);
+
+    var ejeBarrasY = d3.axisLeft(escalaBarrasY);
+
+    svgBarras.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(ejeBarrasX);
+
+
+    // Se añade el ejeY al svg grupo (g).
+    svgBarras.append("g")
+        .call(ejeBarrasY);
+
+    var ID = 0;
+    metricas.forEach(function (d0) {
+
+        svgBarras.selectAll("rect" + ID)
+            .data(d0.Datos)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) { return i * 69 + ID * 8; })
+            .attr("y", function (d) { return 600 - escalaBarrasY(d.Valor); })
+            .attr("width", 5)
+            .attr("height", function (d) { return escalaBarrasY(d.Valor); })
+            .attr("id", ID)
+            .attr("stroke", coloresLineas[ID])
+            .attr("fill", coloresLineas[ID])
+            .on("mouseover", function () {
+                d3.select(this).style("stroke-width", "4");
+            })
+            .on("mouseout", function () {
+                d3.select(this).style("stroke-width", "1");
+            });
+
+
+        ID++;
+
+        console.log(ID)
+    });
+
 
 });

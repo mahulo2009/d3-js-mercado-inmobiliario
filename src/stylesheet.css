@@ -6,12 +6,23 @@
     width: 150px;
     pointer-events: none;
 }
-
 .mi-boton {
     border: none;
     outline: none;
 }
-
 .legend {
     line-height: .5;
+}
+.graficas {
+    display: flex;
+}
+
+.grafica1 {
+    width: 50%;
+
+
+}
+
+.grafica2 {
+    width: 50%;
 }
