@@ -163,8 +163,13 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             .attr("id", ID)
             .attr("class", "linea");
 
-        // Puntos
-        svg.selectAll(".dot")
+        // Se crean puntos a lo largo de la línea, centrados donde existen valores (cx,cy) sería igual
+        // a la fecha y el valor en esa fecha.Se incluye el campo ID para poder luego ocultar/mostrar 
+        // los puntos asociados a la línea, según el usuario seleccione las líneas a visualizar.
+
+        // Se guarda en la variable puntos para poder luego definir las acciones de mostrar/ocultar tooltip
+        // al pasar el punter del ratón por los puntos.    
+        puntos = svg.selectAll(".dot")
             .data(d0.Datos)
             .enter().append("circle")
             .attr("cx", function (d) { return escalaX(new Date(d.fecha)); })
@@ -172,6 +177,31 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             .attr("r", 4)
             .attr("id", ID)
             .attr("fill", "steelblue");
+
+
+        // Se define la acción al pasar el ratón sobre los puntos, de mostar el tooltip.
+        // Haciendo uso del parémtro (d) que sería el registro actual, se extrae información
+        // detallada de el registro y se presenta en el tooltip, cuyo estilo se ha definido en 
+        // la el fichero html.
+        puntos.on("mouseover", function (d, i) {
+            d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .html(
+                    "Año: " + d.Agno + "<br>" +
+                    "Mes: " + d.Periodo + "<br>" +
+                    "Valor: " + (d.Valor).toFixed(2) + "%" + "<br>" +
+                    "Estado: " + (d.Estado) + "<br>"
+                )
+                // Se posiciona tooltip en la coordenada X,Y del click del ratón más cierto marge
+                // para que sea visible y el puntero del ratón no oculte la información.
+                .style("left", (d3.event.pageX + 12) + "px")
+                .style("top", d3.event.pageY + "px");
+
+        }).on("mouseout", function () {
+            // Cuando el puntero del ratón se mueve fuera del punto, se elimina el tooltip.
+            d3.select(".tooltip").remove();
+        });
 
         ID++;
 
