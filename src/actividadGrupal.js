@@ -83,6 +83,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         .append("g")
         .attr("transform", "translate(" + margen.izquierdo + "," + margen.superior + ")");
 
+
     // Para definir la escala se utiliza la metrica 0, ya que esta
     // sería la que podría tener un rango mayor y válido para el resto.
 
@@ -140,26 +141,35 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     svg.append("g")
         .call(ejeY);
 
+    // Para cada una de las métricas.    
     var ID = 0;
     metricas.forEach(function (d0) {
 
+        // Se crea una línea conde la coordenada X sería la fecha y la coordenada Y sería el valor.
+        // Se suaviza la curva con función MonotoneX.
         var linea = d3.line()
             .x(function (d) { return escalaX(new Date(d.fecha)); })
             .y(function (d) { return escalaY(d.Valor); })
             .curve(d3.curveMonotoneX)
 
+
+        // Se vincula a la linea los valores, créandose con una configuraión de color, relleno etc...
+        // Se añade un ID a la clase para luego poder activarse/desactivarse mediante acciones de botón.    
         svg.append("path")
             .datum(d0.Datos)
             .attr("d", linea)
             .attr("stroke", "steelblue")
             .attr("fill", "none")
-            .style("stroke-width", "2")
-            .attr("id", ID);
+            .style("stroke-width", "1")
+            .attr("id", ID)
+            .attr("class", "linea");
+        ;
 
         ID++;
 
     });
 
+    // Se crear una estructura de datos para guardar si línea está siendo visualizada o no.
     var lineasVisibles = {
         linea1: true,
         linea2: true,
@@ -170,6 +180,8 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         linea7: true
     };
 
+    // Para cada uno de los botones se define una acción, donde se visualiza la línea o no, dependiendo
+    // de si pulsamos el botón correspondiente y del estado anterior.
     d3.select("#linea-1")
         .on("click", function () {
             console.log("Button clicked!")
@@ -219,4 +231,16 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             svg.select("path[id='6']").style("display", lineasVisibles.linea7 ? "inline" : "none");
         });
 
-})
+    d3.selectAll(".linea")
+        .on("mouseover", function (d) {
+            d3.select(this).style("stroke-width", "4");
+        })
+        .on("mouseout", function () {
+            d3.select(this).style("stroke-width", "1");
+        })
+        .on("click", function (d) {
+            alert("Valor: " + d.Valor);
+
+        });
+
+});
