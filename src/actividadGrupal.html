@@ -3,39 +3,33 @@
     <head>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="actividadGrupal.js"></script>
+        <link rel="stylesheet" href="stylesheet.css">
     </head>
     
     <body>
 
-        <button id="linea-1">Mostrar línea 1</button>
-        <button id="linea-2">Mostrar línea 2</button>
-        <button id="linea-3">Mostrar línea 3</button>
-        <button id="linea-4">Mostrar línea 4</button>
-        <button id="linea-5">Mostrar línea 5</button>
-        <button id="linea-6">Mostrar línea 6</button>
-        <button id="linea-7">Mostrar línea 7</button>
-
-        <div id="graficaBarras">           
+        <div id="graficaBarras">
         </div>
-        
-        
+
+
         <div id="graficaLineas">
-            
+
         </div>
         
-        <!--Me imagino que lo necesitaremos -->
-        <style>
-            .tooltip {
-                position: absolute;
-                color: white;
-                border-radius: 4px;
-                background: black;
-                width: 150px;
-                pointer-events: none;
-            }
-        </style>
-    
+        <div class="legend" id=legenda>
+            <br><button class="mi-boton" id="linea-1">Porcentaje de variación de Viviendas con respecto al mismo mes del año
+                anterior para nueva como tipo de vivienda</button></br>
+            <br><button class="mi-boton" id="linea-2">Porcentaje de variación de Viviendas con respecto al mismo mes del año
+                anterior para de segunda mano como tipo de vivienda</button></br>
+            <br><button class="mi-boton" id="linea-3">Porcentaje de variación de Viviendas con respecto al mismo mes del año
+                anterior para general como tipo de vivienda</button></br>
+            <br><button class="mi-boton" id="linea-4">Porcentaje de variación de Euros / metro cuadrado con respecto al mismo
+                mes del año anterior para total como tipo de vivienda</button></br>
+            <br><button class="mi-boton" id="linea-5">Porcentaje de variación de Número de hipotecas con respecto al mismo mes
+                del año anterior para total como naturaleza de la finca</button></br>
+            <br><button class="mi-boton" id="linea-7">Porcentaje de variación de Euros con respecto al mismo mes del año
+                anterior para deuda para vivienda como tipo de deuda</button></br>
+        </div>
     </body>
-
 
 </html>

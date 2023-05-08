@@ -34,7 +34,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     //      con respecto al mismo mes del año anterior
       
     // Se almacena en la vaible las metricas.
-    var metricas = datosCompletos.Respuesta.Datos.Metricas
+    var metricas = datosCompletos.Respuesta.Datos.Metricas;
     
 
     // Con el objetivo de facilitar la creación de el eje X como escala temporal,
@@ -141,6 +141,17 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
     svg.append("g")
         .call(ejeY);
 
+
+    var coloresLineas = [
+        "#1F1F7A",
+        "#555555",
+        "#003366",
+        "#006633",
+        "#990000",
+        "#000000",
+        "#660066"
+    ]
+
     // Para cada una de las métricas.    
     var ID = 0;
     metricas.forEach(function (d0) {
@@ -157,7 +168,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         svg.append("path")
             .datum(d0.Datos)
             .attr("d", linea)
-            .attr("stroke", "steelblue")
+            .attr("stroke", coloresLineas[ID])
             .attr("fill", "none")
             .style("stroke-width", "1")
             .attr("id", ID)
@@ -176,7 +187,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
             .attr("cy", function (d) { return escalaY(d.Valor); })
             .attr("r", 4)
             .attr("id", ID)
-            .attr("fill", "steelblue");
+            .attr("fill", coloresLineas[ID]);
 
 
         // Se define la acción al pasar el ratón sobre los puntos, de mostar el tooltip.
@@ -235,8 +246,7 @@ d3.json("https://raw.githubusercontent.com/mahulo2009/d3-js-mercado-inmobiliario
         });
 
     d3.select("#linea-3")
-        .on("click", function () {
-            console.log("Button clicked!")
+        .on("click", function () {            
             lineasVisibles.linea3 = !lineasVisibles.linea3;
             svg.select("path[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");
             svg.selectAll("circle[id='2']").style("display", lineasVisibles.linea3 ? "inline" : "none");            
